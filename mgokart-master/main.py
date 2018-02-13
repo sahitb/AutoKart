@@ -88,8 +88,8 @@ def get_and_send_setpoint(frame, curr_speed, curr_bearing, conn, verbose=False):
     speed, bearing = get_speed_steering(cones)
 
     if verbose:
-        print 'Speed:\t%05.1f' % speed
-        print 'Bearing:\t%05.1f' % bearing
+        print('Speed:\t%05.1f' % speed)
+        print('Bearing:\t%05.1f' % bearing)
 
     if conn:
         conn.sendall('%05.1f,%05.1f' % (speed, bearing))
@@ -102,15 +102,15 @@ if __name__ == '__main__':
     args = parser.parse_args()
 
     if args.connect:
-        print 'Trying to connect to socket on port %d' % ME_PORT
+        print('Trying to connect to socket on port %d' % ME_PORT)
         conn = init_connection(ME_PORT)
     else:
-        print 'Not trying to connect to a socket!'
+        print('Not trying to connect to a socket!')
         conn = None
 
 
     if args.filename:
-        print 'Reading data from file: %s' % args.filename
+        print('Reading data from file: %s' % args.filename)
 
         data = parse_csv_data(args.filename, FOV)
 
@@ -122,7 +122,7 @@ if __name__ == '__main__':
 
             get_and_send_setpoint(frame, curr_speed, curr_bearing, conn, True)
     else:
-        print 'Reading data from LIDAR'
+        print('Reading data from LIDAR')
         laser = enable_laser()
 
         while True:

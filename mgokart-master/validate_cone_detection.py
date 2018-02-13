@@ -85,7 +85,7 @@ def in_range(cone):
     return d > MIN_RANGE and d < MAX_RANGE
 
 def read_annotate_file(filename):
-    print 'Reading file: {}'.format(filename)
+    print('Reading file: {}'.format(filename))
     real_cones = []
     for line in open(filename):
         cone_x, cone_y = line.strip().split(' ')
@@ -98,10 +98,10 @@ def read_annotate_file(filename):
 def check_close(cone, real_cones):
     for real_cone in real_cones:
         if dist(cone, real_cone) < 250: # 25cm
-            print 'Found {} matches real {}'.format(cone, real_cone)
+            print('Found {} matches real {}'.format(cone, real_cone))
             return True
 
-    print 'Found {} doesn\'t match'.format(cone)
+    print('Found {} doesn\'t match'.format(cone))
     return False
 
 def validate_scan(frame, annotate_file):
@@ -111,9 +111,9 @@ def validate_scan(frame, annotate_file):
     cone_xs, cone_ys = separate_and_flip(real_cones)
     plt.scatter(cone_xs, cone_ys, color='b', marker='^')
 
-    print 'Found cones [{}]: {}'.format(len(found_cones), sorted(found_cones))
-    print 'Real cones [{}]: {}'.format(len(real_cones), sorted(real_cones))
-    print
+    print('Found cones [{}]: {}'.format(len(found_cones), sorted(found_cones)))
+    print('Real cones [{}]: {}'.format(len(real_cones), sorted(real_cones)))
+    print()
     
     correct = 0
     total = len(real_cones)
@@ -124,12 +124,12 @@ def validate_scan(frame, annotate_file):
             plt.scatter(cone_x, cone_y, color='k', marker='^')
             correct += 1
 
-    print
-    print 'Scan: {}'.format(annotate_file)
-    print 'Correct: {}'.format(correct)
-    print 'Total: {}'.format(total)
-    print 'Percent: {}%'.format(int(float(correct) / float(total) * 100))
-    print
+    print()
+    print('Scan: {}'.format(annotate_file))
+    print('Correct: {}'.format(correct))
+    print('Total: {}'.format(total))
+    print('Percent: {}%'.format(int(float(correct) / float(total) * 100)))
+    print()
 
     plt.show()
 

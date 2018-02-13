@@ -56,7 +56,7 @@ def plot_boundaries(cones, left_boundary, right_boundary):
     right_ys = [point[1] for point in right_boundary]
     red, = plt.plot(right_xs, right_ys, color='red', label='Right Boundary')
 
-	# Plot vehicle
+    # Plot vehicle
     green = plt.scatter(0, 0, color='green', label='Vehicle Position')
 
     return plt
@@ -81,9 +81,9 @@ def create_boundary_lines(cones, verbose = False):
 
         # Print distances
         if verbose:
-            print "Testing Cone at " + str(cones[cone]) + " for left boundary"
-            print "Left: " + str(dist(cones[cone], left_bound[-1]))
-            print "Right: " + str(dist(cones[cone], right_bound[-1]))
+            print("Testing Cone at " + str(cones[cone]) + " for left boundary")
+            print("Left: " + str(dist(cones[cone], left_bound[-1])))
+            print("Right: " + str(dist(cones[cone], right_bound[-1])))
 
         # Get change in slope
         if len(left_bound) > 1:
@@ -100,10 +100,10 @@ def create_boundary_lines(cones, verbose = False):
         if dist_right < dist_left or dist_left > MAX_DISTANCE_ALLOWED or theta > MAX_ANGLE_ALLOWED:
             skip_boundary = True
             if verbose:
-                print "Left side skipped"
+                print("Left side skipped")
         else:
             if verbose:
-                print "Adding cone to left bound"
+                print("Adding cone to left bound")
             left_bound.append(cones[cone])
             cones.pop(cone)
 
@@ -114,9 +114,9 @@ def create_boundary_lines(cones, verbose = False):
 
         # Print distances
         if verbose:
-            print "Testing Cone at " + str(cones[cone]) + " for right boundary"
-            print "Left: " + str(dist(cones[cone], left_bound[-1]))
-            print "Right: " + str(dist(cones[cone], right_bound[-1]))
+            print("Testing Cone at " + str(cones[cone]) + " for right boundary")
+            print("Left: " + str(dist(cones[cone], left_bound[-1])))
+            print("Right: " + str(dist(cones[cone], right_bound[-1])))
 
         # Get change in slope
         if len(right_bound) > 1:
@@ -132,12 +132,12 @@ def create_boundary_lines(cones, verbose = False):
         # Test cone
         if dist_left < dist_right or dist_right > MAX_DISTANCE_ALLOWED or theta > MAX_ANGLE_ALLOWED:
             if verbose:
-                print "Right side finished"
+                print("Right side finished")
             if skip_boundary:
                 break
         else:
             if verbose:
-                print "Adding cone to right bound"
+                print("Adding cone to right bound")
             right_bound.append(cones[cone])
             cones.pop(cone)
 
@@ -150,20 +150,20 @@ if __name__ == '__main__':
         files = ['lidar_data/' + path for path in sorted(os.listdir('lidar_data'))]
 
     for filename in files:
-		data = parse_csv_data(filename, fov=200)
+        data = parse_csv_data(filename, fov=200)
 
-		start = time.time()
+        start = time.time()
 
-		for frame in data:
-			cones = get_cones(frame, [], [])
-                        plot_cones = list(cones)
+        for frame in data:
+            cones = get_cones(frame, [], [])
+            plot_cones = list(cones)
 
-			detect_finish_line(cones)
-			lines = create_boundary_lines(cones)
+            detect_finish_line(cones)
+            lines = create_boundary_lines(cones)
 
-			print('Boundary mapping took %f seconds' % (time.time() - start))
+            print('Boundary mapping took %f seconds' % (time.time() - start))
 
-			# Uncomment to see boundaries on a scatter plot
-			plot_boundaries(plot_cones, lines[0], lines[1]).show()
-			print 'Left Boundary: ', lines[0]
-			print 'Right Boundary: ', lines[1]
+            # Uncomment to see boundaries on a scatter plot
+            plot_boundaries(plot_cones, lines[0], lines[1]).show()
+            print('Left Boundary: ', lines[0])
+            print('Right Boundary: ', lines[1])

@@ -52,7 +52,7 @@ def get_finish_line_groups(cones, verbose=False):
         dist2 = dist(pt2, pt3)
 
         if verbose:
-            print pt1, pt2, pt3, theta, dist1, dist2
+            print(pt1, pt2, pt3, theta, dist1, dist2)
 
         if theta < ANGLE_THRESHOLD and dist1 < DIST_THRESHOLD \
                 and dist2 < DIST_THRESHOLD:

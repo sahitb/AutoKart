@@ -349,4 +349,4 @@ if __name__ == '__main__':
     try:
         laser = Hokuyo(port, model_name = "Some_Hokuyo_model")
     except Exception as e:
-        print "Got Exception --", str(e)
+        print("Got Exception --", str(e))

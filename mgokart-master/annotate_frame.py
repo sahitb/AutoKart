@@ -13,7 +13,7 @@ except:
 REAL_CONES = []
 
 def onclick_handler(event):
-    print 'Adding cone: ({}, {})'.format(event.xdata, event.ydata)
+    print('Adding cone: ({}, {})'.format(event.xdata, event.ydata))
     REAL_CONES.append((float(event.xdata), float(event.ydata)))
 
 def register_click_handler():
@@ -23,8 +23,8 @@ def register_click_handler():
 def save_cones(filename, frame_number):
     save_file = create_annotate_filename(filename, frame_number)
 
-    print 'Save file: {}'.format(save_file)
-    print 'Saving cones: {}'.format(REAL_CONES)
+    print('Save file: {}'.format(save_file))
+    print('Saving cones: {}'.format(REAL_CONES))
 
     with open(save_file, "w") as outfile:
         for cone in REAL_CONES:
@@ -33,13 +33,13 @@ def save_cones(filename, frame_number):
 if __name__ == '__main__':
 
     if len(sys.argv) < 3:
-        print 'Usage: ./{} <scan-filename> <frame-number>'.format(sys.argv[0])
+        print('Usage: ./{} <scan-filename> <frame-number>'.format(sys.argv[0]))
         sys.exit()
 
     filename = sys.argv[1]
     frame_number = int(sys.argv[2])
 
-    print 'Showing {} : {}'.format(filename, frame_number)
+    print('Showing {} : {}'.format(filename, frame_number))
 
     register_click_handler()
 

@@ -23,7 +23,7 @@ def receive_feedback(conn, verbose=False):
     speed, bearing = msg.split(',')
 
     if verbose:
-        print 'Speed:', speed
-        print 'Bearing:', bearing
+        print('Speed:', speed)
+        print('Bearing:', bearing)
 
     return float(speed), float(bearing)

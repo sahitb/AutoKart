@@ -67,7 +67,7 @@ def vehicle_state_updates(log_filename, conn):
     with open(log_filename, 'w') as log:
         while True:
             speed, steering = receive_feedback(conn)
-            print speed, steering
+            print(speed, steering)
             log_vehicle_state(log, speed, steering)
 
 # LIDAR updates listener thread
@@ -75,7 +75,7 @@ def lidar_updates(log_filename, lidar):
     with open(log_filename, 'w') as log:
         while True:
             distances = lidar.get_scan()
-            print distances
+            print(distances)
             points = get_world_points(distances, LIDAR_FOV)
             log_lidar(log, points)
 

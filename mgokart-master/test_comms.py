@@ -19,18 +19,18 @@ def vehicle_update_listener(conn):
     while True:
         speed, steering = receive_feedback(conn)
         with state_lock:
-	    CURR_SPEED, CURR_BEARING = speed, steering
+            CURR_SPEED, CURR_BEARING = speed, steering
         #print 'FROM ME: {}, {}'.format(speed, steering)
 
 if __name__ == '__main__':
 
-    print 'Connecting to ME side...'
+    print('Connecting to ME side...')
     me_conn = init_connection(ME_PORT)
-    print 'Connected'
+    print('Connected')
 
-    print 'Connecting to SIM side...'
+    print('Connecting to SIM side...')
     sim_conn = init_connection(SIM_PORT)
-    print 'Connected'
+    print('Connected')
 
     vehicle_updates_thread = threading.Thread(target=vehicle_update_listener, args=(me_conn,))
     vehicle_updates_thread.daemon = True
@@ -56,8 +56,8 @@ if __name__ == '__main__':
             if mtype == 'S':
                 calc_speed = int(data[1:].split(',')[0])
                 calc_bearing = int(data[1:].split(',')[1])
-                print 'Setpoint Speed: ' + str(calc_speed)
-                print 'Setpoint Bearing: ' + str(calc_bearing)
+                print('Setpoint Speed: ' + str(calc_speed))
+                print('Setpoint Bearing: ' + str(calc_bearing))
 
             # Received Cones
             elif mtype == 'C':
@@ -79,7 +79,7 @@ if __name__ == '__main__':
             elif mtype == 'E':
                 motor_disable = False
             else:
-                print 'Unknown message type'
+                print('Unknown message type')
 
             if motor_disable:
                 with state_lock:
@@ -87,15 +87,15 @@ if __name__ == '__main__':
                 calc_speed = 0
 
             # Send to ME's every time
-            print 'TO ME:  {}, {}'.format(calc_speed, calc_bearing)
+            print('TO ME:  {}, {}'.format(calc_speed, calc_bearing))
             me_conn.sendall('%05.1f,%05.1f' % (calc_speed, calc_bearing))
 
             with state_lock:
                 curr_speed, curr_bearing = CURR_SPEED, CURR_BEARING
 
             # Send to SIM every time
-            print 'TO SIM: {}, {}, {}, {}, {}, {}'.format(curr_speed, curr_bearing, calc_speed, calc_bearing,\
-                main.LAP_COUNT, calc_time.total_seconds())
+            print('TO SIM: {}, {}, {}, {}, {}, {}'.format(curr_speed, curr_bearing, calc_speed, calc_bearing,\
+                main.LAP_COUNT, calc_time.total_seconds()))
 
             sim_conn.sendall(\
                 str(curr_speed) + ',' + str(curr_bearing) + ',' + \
@@ -108,7 +108,7 @@ if __name__ == '__main__':
                 str(main.RIGHT_BOUNDARY)\
             )
         except Exception as e:
-            print e
+            print(e)
             break
 
     me_conn.close()

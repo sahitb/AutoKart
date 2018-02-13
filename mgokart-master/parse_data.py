@@ -29,7 +29,7 @@ def get_world_points(data, fov):
 def parse_csv_data(filename, fov=270):
     frames = []
 
-    with open(filename, 'rb') as csvfile:
+    with open(filename, 'rt') as csvfile:
         reader = csv.reader(csvfile)
         next(reader, None) # ignore header line
 

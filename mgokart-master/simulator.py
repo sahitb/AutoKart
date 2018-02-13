@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-'''
+"""
 MGoKart Racing Simulator
 Bobby Huddleston - rhuddles@umich.edu
 
@@ -14,7 +14,7 @@ GUI - The origin is in the upper left corner and refers to each pixel on the scr
 Lidar - Vehicle is the origin. 1 pixel = 20 mm
   x increases to the right of the vehicle and decreases to the left
   y increases above the vehicle and decreases below
-'''
+"""
 
 # Python Libraries
 import ast
@@ -25,9 +25,10 @@ import socket
 import threading
 import time
 import traceback
+from tkinter import *
+from tkinter import filedialog
+from tkinter.filedialog import askopenfilename, asksaveasfile, askopenfile
 from operator import itemgetter
-from tkFileDialog import askopenfile, asksaveasfile, askopenfilename
-from Tkinter import Tk
 import numpy as np
 
 # QT5 Libraries
@@ -47,14 +48,14 @@ from utility import angle_between
 # Constants - TODO: Move these to either class privates or expose to user
 scaling_factor = 20.0 # Pixel to real world scaling
 STEPPER_SLEW = 378.0 / 4.0 # Speed of the stepper motor in degrees/second
-T = .25 # Simulation step size
-LIDAR_FOV = 240 # Lidar's field of view in degrees
-LIDAR_RANGE = 10000 # Lidar's filter range in millimeters
-STEERING_RANGE = 45.0 # Maximum steering wheel angle
-WHEEL_RANGE = 35.0 # Maximum wheel angle
+T = .25  # Simulation step size
+LIDAR_FOV = 240  # Lidar's field of view in degrees
+LIDAR_RANGE = 10000  # Lidar's filter range in millimeters
+STEERING_RANGE = 45.0  # Maximum steering wheel angle
+WHEEL_RANGE = 35.0  # Maximum wheel angle
 VEHICLE_ACCELERATION = 5 # Max acceleration in m/s^2
 VEHICLE_DECELERATION = 5 # Max deceleration in m/s^2
-L = 942.0 #Wheel base in mm
+L = 942.0 # Wheel base in mm
 
 LAST_HOST_FILENAME = 'last_host.txt'
 
@@ -115,9 +116,9 @@ class CourseMaker(QWidget):
         self.errors = []
         self.center_pt_calc = None
 
-         # Get lidar position
+        # Get lidar position
         #res = QApplication.desktop().availableGeometry(1);
-        res = QApplication.desktop().screenGeometry();
+        res = QApplication.desktop().screenGeometry()
         scaling_factor = 64000.0/res.width()
 
         self.lidar_pos = ((res.width()- 370)/2,res.height()*3.0/5)
@@ -162,9 +163,9 @@ class CourseMaker(QWidget):
         return cones
 
     def boundaryMapping(self):
-        '''
+        """
         Runs the boundary mapping algorithm. Sets left and right bound lists.
-        '''
+        """
         # Error Checking
         if len(self.detected_cones) < 2:
             print('Not enough cones detected! Implement short term memory if you want this to work')
@@ -194,7 +195,7 @@ class CourseMaker(QWidget):
                 else:
                     bm_on = False
 
-        except Exception, e:
+        except Exception as e:
             print('Error running boundary mapping!')
             traceback.print_exc()
 
@@ -202,9 +203,9 @@ class CourseMaker(QWidget):
         self.update()
 
     def laneKeeping(self):
-        '''
+        """
         Runs the lane keeping algorithm. Sets target steering angle and vehicle speed.
-        '''
+        """
 
         # Error checking
         if not len(self.left_bound) or not len(self.right_bound):
@@ -224,7 +225,7 @@ class CourseMaker(QWidget):
             elif self.target_steering < -STEERING_RANGE:
                 print('Steering angle outside of bounds: ' +  str(self.target_steering))
                 self.target_steering = -STEERING_RANGE
-        except Exception, e:
+        except Exception as e:
             print('Error running lane keeping (steering)!')
             traceback.print_exc()
             self.target_steering = 0
@@ -232,7 +233,7 @@ class CourseMaker(QWidget):
         try:
             self.target_speed = ps.get_next_speed(list(self.left_bound), list(self.right_bound), self.lap_num)
             self.file.write("%f\n" % self.target_speed)
-        except Exception, e:
+        except Exception as e:
             print('Error running lane keeping (speed)!')
             traceback.print_exc()
             self.target_speed = 0
@@ -261,16 +262,16 @@ class CourseMaker(QWidget):
         return coords
 
     def moveVehicle(self, period):
-        '''
+        """
         Transforms gui points into new positions based on vehicle parameters and step size
-        '''
+        """
         self.gui_points = self.movePoints(self.gui_points, period)
         self.center_points = self.movePoints(self.center_points, period)
 
     def updateActuators(self):
-        '''
+        """
         Updates vehicle actuators. Used to model mechanical lag in the system.
-        '''
+        """
 
         # Updates steering angle and wheel angle
         if abs(self.target_steering - self.steering) < (STEPPER_SLEW*T):
@@ -375,18 +376,18 @@ class CourseMaker(QWidget):
         self.errors.append(error_pct)
 
     def calcTotalError(self):
-        print 'Average error was: %s%%' % str(np.mean(self.errors))
-        print 'Median error was:  %s%%' % str(np.median(self.errors))
-        print 'Minimum error was: %d%%' % min(self.errors)
-        print 'Maximum error was: %d%%' % max(self.errors)
+        print('Average error was: %s%%' % str(np.mean(self.errors)))
+        print('Median error was:  %s%%' % str(np.median(self.errors)))
+        print('Minimum error was: %d%%' % min(self.errors))
+        print('Maximum error was: %d%%' % max(self.errors))
         correct_count = sum(1 for e in self.errors if e <= 10.0)
         correct_pct = 100.0 * correct_count / len(self.errors)
-        print 'Within 10%% of center for %d%% of the simulation' % correct_pct
+        print('Within 10%% of center for %d%% of the simulation' % correct_pct)
 
     def stepSim(self):
-        '''
+        """
         Simulates a single step, moving the vehicle and running algorithms on the new location
-        '''
+        """
 
         # Simulate
         self.updateActuators()
@@ -402,9 +403,9 @@ class CourseMaker(QWidget):
         self.updated.emit()
 
     def runSim(self):
-        '''
+        """
         Run simulation continuously until stopped
-        '''
+        """
         while self.sim_on:
             time.sleep(.06)
             self.stepSim()
@@ -415,9 +416,9 @@ class CourseMaker(QWidget):
     ###--- Operational Methods ---###
 
     def enableEdits(self, flag):
-        '''
+        """
         Enables or disables map editing mode based on flag
-        '''
+        """
         self.editFlag = flag
         self.update()
 
@@ -426,9 +427,9 @@ class CourseMaker(QWidget):
         self.update()
 
     def clearMap(self):
-        '''
+        """
         Clears all input points from map. Editing must be enabled for this to work.
-        '''
+        """
         if self.editFlag:
             self.gui_points = []
             self.center_points = []
@@ -445,17 +446,17 @@ class CourseMaker(QWidget):
             self.update()
 
     def undoPlaceCone(self):
-        '''
+        """
         Clears the last cone to be placed
-        '''
+        """
         if len(self.gui_points) and self.editFlag:
             self.gui_points.pop()
             self.update()
 
     def paintEvent(self, event):
-        '''
+        """
         Draws all elements on the course. Called by update
-        '''
+        """
 
         # Sizes
         cone_rad = 250.0/scaling_factor
@@ -477,7 +478,7 @@ class CourseMaker(QWidget):
         # Draw blind spot
         paint.setBrush(Qt.red)
         rectangle = QRect(self.lidar_pos[0] - lidar_range,self.lidar_pos[1] - lidar_range, 2*lidar_range, 2*lidar_range)
-        paint.drawPie(rectangle, ((LIDAR_FOV/2)+90) * 16, (360-LIDAR_FOV) * 16);
+        paint.drawPie(rectangle, ((LIDAR_FOV/2)+90) * 16, (360-LIDAR_FOV) * 16)
 
         # Draw Car
         paint.setBrush(Qt.black)
@@ -597,7 +598,7 @@ class CourseMaker(QWidget):
     def wheelEvent(self, event):
         global scaling_factor
         old_factor = scaling_factor
-        scaling_factor -= event.angleDelta().y()/120.0;
+        scaling_factor -= event.angleDelta().y()/120.0
         if scaling_factor < 1:
             scaling_factor = 1
 
@@ -607,9 +608,9 @@ class CourseMaker(QWidget):
         self.update()
 
     def initUI(self):
-        '''
+        """
         Initializes UI for the widget
-        '''
+        """
 
         # Set background
         p = self.palette()
@@ -619,9 +620,9 @@ class CourseMaker(QWidget):
 
 
 class Simulator(QMainWindow):
-    '''
+    """
     Simulator GUI. Contains menus for map creation, running simulations, and Hardware in the Loop (HITL) testing.
-    '''
+    """
     def __init__(self):
         super(Simulator, self).__init__()
 
@@ -659,9 +660,9 @@ class Simulator(QMainWindow):
 
     ###--- Event Handlers ---###
     def editMap(self, checked):
-        '''
+        """
         Enable or disable map editing
-        '''
+        """
         self.course.enableEdits(checked)
 
     def updateStatus(self):
@@ -739,7 +740,7 @@ class Simulator(QMainWindow):
                         else:
                             current_cones_list.append((pc[0],nc,pc[2]))
                         cones.remove(nc)
-                        break;
+                        break
 
             # Add non-matched cones
             for nc in cones:
@@ -760,7 +761,7 @@ class Simulator(QMainWindow):
                 if cc[2] == 0:
                     # Error but whatever
                     if ref_cone == ((0,0),(0,0),0) and not no_ref:
-                        print "Failed to find a refrence cone!!!!"
+                        print("Failed to find a refrence cone!!!!")
                     dx = cc[0][0] - ref_cone[1][0]
                     dy = cc[0][1] - ref_cone[1][1]
                     x= global_cones_list[ref_cone[2]][0] + dx
@@ -807,21 +808,21 @@ class Simulator(QMainWindow):
             self.sim_on = True
 
     def setMarkCone(self):
-        '''
+        """
         Map editor place cones
-        '''
+        """
         self.course.setMarkCone(True)
 
     def setMarkCenter(self):
-        '''
+        """
         Map editor place center marks
-        '''
+        """
         self.course.setMarkCone(False)
 
     def openConnection(self):
-        '''
+        """
         Connect to gokart for HITL testing
-        '''
+        """
         if self.sock == -1:
             try:
                 host = self.host_textbox.text()
@@ -885,7 +886,7 @@ class Simulator(QMainWindow):
         else:
             self.hitl_running = True
             self.run_hitl_button.setText('Stop HITL Simulation')
-            print 'Running Hardware In The Loop Simulation'
+            print('Running Hardware In The Loop Simulation')
             self.hitl_thread = threading.Thread(target=self.hitlThread)
             self.hitl_thread.daemon = True
             self.hitl_thread.start()
@@ -919,8 +920,8 @@ class Simulator(QMainWindow):
         # update detected boundaries
         self.course.left_bound = ast.literal_eval(left_cones)
         self.course.right_bound = ast.literal_eval(right_cones)
-        print 'left boundaries that luke sent', self.course.left_bound
-        print 'right boundaries that luke sent', self.course.right_bound
+        print('left boundaries that luke sent', self.course.left_bound)
+        print('right boundaries that luke sent', self.course.right_bound)
 
         self.course.moveVehicle(dt)
 
@@ -939,8 +940,8 @@ class Simulator(QMainWindow):
         try:
             self.parseResponse(data)
         except Exception as e:
-            print 'Error parsing response :('
-            print e
+            print('Error parsing response :(')
+            print(e)
 
     def hitlThread(self):
         last_time = time.time()
