@@ -1,0 +1,10 @@
+vision/build
+.venv
+.edison
+venv
+*.pyc
+courses/lastCourse
+me_software/elecComms
+me_software/i2c
+a.out
+last_host.txt
