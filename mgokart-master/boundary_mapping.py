@@ -32,7 +32,7 @@ def find_lower_right_cone(cones):
     return lower_right
 
 def find_closest_cone(current_cone, cones):
-    min_distance = sys.maxint
+    min_distance = sys.maxsize
     if not len(cones):
         return -1
     for c in range(0, len(cones)):
