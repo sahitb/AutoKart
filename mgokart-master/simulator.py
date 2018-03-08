@@ -156,7 +156,7 @@ class CourseMaker(QWidget):
                 lidar_coords.append(((float(x), float(y)), dist, angle, point))
 
         # Sort cones by angle
-        self.detected_cones = sorted(lidar_coords,key=itemgetter(2))
+        self.detected_cones = sorted(lidar_coords, key=itemgetter(2))
         cones = []
         for c in self.detected_cones:
             cones.append(c[0])
@@ -178,7 +178,7 @@ class CourseMaker(QWidget):
         for point in self.detected_cones:
             cones_list.append(point[0])
 
-        count_lap  = fl.detect_finish_line(cones_list)
+        count_lap = fl.detect_finish_line(cones_list)
         self.lap_num = self.lap_num + int(count_lap)
 
         # Run boundary mapping algorithms
@@ -210,6 +210,24 @@ class CourseMaker(QWidget):
         # Error checking
         if not len(self.left_bound) or not len(self.right_bound):
             print('Two boundaries not detected! Implement short term memory if you want this to work')
+            self.target_steering = 0
+            self.target_speed = 0
+            return
+
+        # If all the points in the left bound are to the right of the cart or vice versa, stop.
+        # Angle of a point is in index 2 of the self.detected_cones list
+        left_ok = False
+        right_ok = False
+        for point in self.left_bound:
+            if list(filter(lambda p: p[0] == point, self.detected_cones))[0][2] < 0:
+                left_ok = True
+                break
+        for point in self.right_bound:
+            if list(filter(lambda p: p[0] == point, self.detected_cones))[0][2] > 0:
+                right_ok = True
+                break
+        if not left_ok or not right_ok:
+            print('Boundaries not well formed!')
             self.target_steering = 0
             self.target_speed = 0
             return
